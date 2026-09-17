@@ -11,42 +11,53 @@
     <!-- Font Awesome 6 Icons (As shown in Lab Slide 4 & 9) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Inter & JetBrains Mono for Avionics UI -->
+    <!-- Google Fonts: Editorial High-Contrast Serif (Playfair Display, Cormorant Garamond) + Plus Jakarta Sans + JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind Custom Configuration -->
+    <!-- Tailwind Custom Configuration: Exact Palette from User Reference -->
+    <!-- Indigo Blue: #1A325A | Terracotta: #964B36 | Natural Straw: #C9AF80 | Creamy White: #EDE9DF | Deep Umber: #4B3621 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        serif: ['"Playfair Display"', '"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
+                        indigo: {
+                            900: '#1A325A', // Indigo Blue
+                            950: '#102038',
                         },
-                        radar: {
-                            glow: '#10b981',
-                            alert: '#ef4444',
-                            warning: '#f59e0b',
-                            dark: '#0a0f1d'
+                        terracotta: {
+                            DEFAULT: '#964B36', // Terracotta
+                            hover: '#803D2A',
+                            light: '#B2614B'
+                        },
+                        straw: {
+                            DEFAULT: '#C9AF80', // Natural Straw
+                            light: '#E2CEAB',
+                            dark: '#A88D5E'
+                        },
+                        creamy: {
+                            DEFAULT: '#EDE9DF', // Creamy White
+                            light: '#F8F6F1',
+                            dark: '#DFD8C9'
+                        },
+                        umber: {
+                            DEFAULT: '#4B3621', // Deep Umber
+                            dark: '#382818',
+                            deep: '#261B10'
                         }
                     },
                     animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-slow': 'pulse 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'radar-sweep': 'sweep 4s linear infinite',
                         'ping-slow': 'ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite',
-                        'float': 'float 3.5s ease-in-out infinite',
+                        'float': 'float 4s ease-in-out infinite',
                     },
                     keyframes: {
                         sweep: {
@@ -55,7 +66,7 @@
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-8px)' }
+                            '50%': { transform: 'translateY(-7px)' }
                         }
                     }
                 }
@@ -64,471 +75,653 @@
     </script>
 
     <style>
-        /* Custom radar background grid */
+        /* Warm editorial grid texture */
+        .warm-grid {
+            background-image: 
+                linear-gradient(rgba(75, 54, 33, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(75, 54, 33, 0.04) 1px, transparent 1px);
+            background-size: 36px 36px, 36px 36px;
+        }
+
+        /* Radar screen grid using Indigo Blue, Deep Umber & Natural Straw */
         .radar-grid {
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
+                radial-gradient(circle at 50% 50%, rgba(201, 175, 128, 0.22) 0%, transparent 65%),
+                linear-gradient(rgba(201, 175, 128, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 175, 128, 0.12) 1px, transparent 1px);
+            background-size: 100% 100%, 28px 28px, 28px 28px;
+        }
+
+        /* Progressive atmospheric blur transitions where background colors change */
+        .blur-fade-to-features {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 140px;
+            pointer-events: none;
+            z-index: 20;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 35%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 35%, black 100%);
+            background: linear-gradient(to bottom, transparent 0%, rgba(244, 240, 230, 0.45) 35%, rgba(244, 240, 230, 0.9) 75%, #F4F0E6 100%);
+        }
+
+        .blur-fade-to-simulator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 160px;
+            pointer-events: none;
+            z-index: 20;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, black 100%);
+            background: linear-gradient(to bottom, transparent 0%, rgba(26, 50, 90, 0.4) 30%, rgba(26, 50, 90, 0.88) 75%, #1A325A 100%);
+        }
+
+        .blur-fade-to-footer {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 140px;
+            pointer-events: none;
+            z-index: 20;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, black 100%);
+            background: linear-gradient(to bottom, transparent 0%, rgba(75, 54, 33, 0.4) 30%, rgba(75, 54, 33, 0.88) 75%, #4B3621 100%);
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+<body class="bg-[#EDE9DF] text-[#4B3621] font-sans antialiased flex flex-col min-h-screen selection:bg-[#964B36] selection:text-[#EDE9DF]">
 
-    <!-- TOP SYSTEM STATUS BANNER -->
-    <div class="bg-gray-900 text-gray-300 text-xs py-1.5 px-4 border-b border-gray-800">
+    <!-- TOP SYSTEM STATUS BANNER (Deep Umber & Natural Straw) -->
+    <div class="bg-[#4B3621] text-[#C9AF80] text-xs py-2 px-4 border-b border-[#C9AF80]/25 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span class="font-mono text-emerald-400 font-semibold">SENTINEL-NODE-ALPHA: ACTIVE</span>
-                <span class="hidden sm:inline text-gray-400">| Priority Air Corridor Narcotics Anomaly Filter Engaged</span>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#964B36] animate-ping"></span>
+                <span class="font-mono font-bold tracking-wider text-[#EDE9DF]">AEROSENTINEL INTELLIGENCE</span>
+                <span class="hidden sm:inline text-[#C9AF80]/60">|</span>
+                <span class="hidden sm:inline font-serif italic text-[12px] text-[#C9AF80] tracking-wide">"SEE THE RISK BEFORE IT FLIES."</span>
             </div>
-            <div class="flex items-center gap-4 text-gray-400 font-mono text-[11px]">
-                <span>LATENCY: <strong class="text-white">38ms</strong></span>
-                <span class="hidden md:inline">INDEXED FLIGHTS: <strong class="text-white">18,492 TODAY</strong></span>
+            <div class="flex items-center gap-4 font-mono text-[11px] text-[#EDE9DF]/80">
+                <span>LATENCY: <strong class="text-[#C9AF80]">24ms</strong></span>
+                <span class="hidden md:inline">GA SECTOR FLIGHTS: <strong class="text-[#C9AF80]">18,492 TODAY</strong></span>
             </div>
         </div>
     </div>
 
-    <!-- 1. HEADER & NAVIGATION BAR (As shown in Slide 4, 6, 8) -->
-    <header class="bg-blue-700 text-white sticky top-0 z-50 shadow-lg transition-all duration-300" id="main-header">
-        <nav class="container mx-auto flex justify-between items-center p-4">
-            <!-- Brand Title (Clean, matching Slide 4 & 8) -->
-            <h1 class="text-2xl font-bold tracking-tight">
-                <a href="#home" class="text-white hover:text-blue-100 transition-colors">AeroSentinel</a>
+    <!-- 1. HEADER & NAVIGATION BAR (Indigo Blue & Creamy White with Natural Straw Accents) -->
+    <header class="bg-[#1A325A]/95 backdrop-blur-md text-[#EDE9DF] sticky top-8 z-40 shadow-xl border-b border-[#C9AF80]/30 transition-all duration-300" id="main-header">
+        <nav class="container mx-auto flex justify-between items-center py-4 px-6">
+            <!-- Brand Title (Editorial Serif matching Slide 4 & 8) -->
+            <h1 class="text-2xl sm:text-3xl font-serif font-bold tracking-tight">
+                <a href="#home" class="text-[#EDE9DF] hover:text-[#C9AF80] transition-colors flex items-center gap-3 group">
+                    <span>AeroSentinel</span>
+                    <span class="text-[10px] font-mono font-semibold tracking-widest text-[#EDE9DF] bg-[#964B36] px-2 py-0.5 rounded uppercase shadow-sm">GA Interdict</span>
+                </a>
             </h1>
 
             <!-- Desktop Navigation Links -->
-            <ul class="hidden md:flex items-center gap-7 font-medium text-sm text-blue-100">
-                <li><a href="#home" class="hover:text-white transition-colors duration-200 flex items-center gap-1.5"><i class="fa-solid fa-house text-xs"></i> Home</a></li>
-                <li><a href="#features" class="hover:text-white transition-colors duration-200 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-xs"></i> Features</a></li>
-                <li><a href="#simulator" class="hover:text-white transition-colors duration-200 flex items-center gap-1.5"><i class="fa-solid fa-satellite-dish text-xs"></i> Risk Simulator</a></li>
+            <ul class="hidden md:flex items-center gap-8 font-sans font-medium text-sm text-[#EDE9DF]/90">
+                <li>
+                    <a href="#home" class="hover:text-[#C9AF80] transition-colors duration-200 flex items-center gap-1.5 py-1">
+                        <i class="fa-solid fa-house text-xs text-[#C9AF80]"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="#features" class="hover:text-[#C9AF80] transition-colors duration-200 flex items-center gap-1.5 py-1">
+                        <i class="fa-solid fa-shield-halved text-xs text-[#C9AF80]"></i> Features
+                    </a>
+                </li>
+                <li>
+                    <a href="#simulator" class="hover:text-[#C9AF80] transition-colors duration-200 flex items-center gap-1.5 py-1">
+                        <i class="fa-solid fa-satellite-dish text-xs text-[#C9AF80]"></i> Risk Simulator
+                    </a>
+                </li>
             </ul>
 
             <!-- Header Action CTA & Mobile Menu Toggle -->
             <div class="flex items-center gap-3">
-                <a href="#simulator" class="hidden sm:inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-gray-900 font-semibold text-xs px-3.5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all">
-                    <i class="fa-solid fa-crosshairs"></i> Live Radar Demo
+                <a href="#simulator" class="hidden sm:inline-flex items-center gap-2 bg-[#964B36] hover:bg-[#803D2A] text-[#EDE9DF] font-sans font-semibold text-xs px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 border border-[#EDE9DF]/20">
+                    <i class="fa-solid fa-crosshairs text-[#C9AF80]"></i> Live Radar Demo
                 </a>
                 <!-- Mobile Hamburger Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-white hover:text-blue-200 p-2 focus:outline-none" aria-label="Toggle navigation menu">
+                <button id="mobile-menu-btn" class="md:hidden text-[#EDE9DF] hover:text-[#C9AF80] p-2 focus:outline-none" aria-label="Toggle navigation menu">
                     <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
                 </button>
             </div>
         </nav>
 
         <!-- Mobile Dropdown Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-blue-800 border-t border-blue-600 px-4 py-3 space-y-2">
-            <a href="#home" class="block py-2 text-blue-100 hover:text-white hover:bg-blue-700 rounded px-3 text-sm"><i class="fa-solid fa-house mr-2"></i> Home</a>
-            <a href="#features" class="block py-2 text-blue-100 hover:text-white hover:bg-blue-700 rounded px-3 text-sm"><i class="fa-solid fa-shield-halved mr-2"></i> Features</a>
-            <a href="#simulator" class="block py-2 text-blue-100 hover:text-white hover:bg-blue-700 rounded px-3 text-sm"><i class="fa-solid fa-satellite-dish mr-2"></i> Risk Simulator</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#102038] border-t border-[#C9AF80]/20 px-6 py-4 space-y-3">
+            <a href="#home" class="block py-2 text-[#EDE9DF] hover:text-[#C9AF80] hover:bg-[#1A325A] rounded px-3 text-sm font-medium"><i class="fa-solid fa-house mr-2 text-[#C9AF80]"></i> Home</a>
+            <a href="#features" class="block py-2 text-[#EDE9DF] hover:text-[#C9AF80] hover:bg-[#1A325A] rounded px-3 text-sm font-medium"><i class="fa-solid fa-shield-halved mr-2 text-[#C9AF80]"></i> Features</a>
+            <a href="#simulator" class="block py-2 text-[#EDE9DF] hover:text-[#C9AF80] hover:bg-[#1A325A] rounded px-3 text-sm font-medium"><i class="fa-solid fa-satellite-dish mr-2 text-[#C9AF80]"></i> Risk Simulator</a>
         </div>
     </header>
 
     <!-- MAIN CONTENT (Semantic HTML5 as required in Exercise-1) -->
-    <main class="flex-grow">
+    <main class="flex-grow relative">
 
-    <!-- 2. HERO SECTION (Matches Layout Pattern in Slide 8) -->
-    <section id="home" class="relative bg-gradient-to-b from-blue-50 via-white to-gray-100 pt-16 pb-20 border-b border-gray-200 overflow-hidden">
-        <!-- Subtle background aviation decorative elements -->
-        <div class="absolute inset-0 pointer-events-none opacity-5 flex justify-between items-center px-10">
-            <i class="fa-solid fa-plane text-[240px] -rotate-12 -ml-20"></i>
-            <i class="fa-solid fa-radar text-[280px] -mr-20"></i>
-        </div>
+        <!-- 2. HERO SECTION (Creamy White with Indigo Blue, Terracotta & Natural Straw Accents) -->
+        <section id="home" class="relative pt-20 pb-36 overflow-hidden warm-grid bg-[#EDE9DF]">
+            
+            <!-- Ambient Background Video Overlay (Air Cargo Operations & Surveillance Mission) -->
+            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none mix-blend-multiply z-0">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/8/8a/16th_EAS_conducts_a_cargo_mission_within_CENTCOM_%28991549%29.webm/16th_EAS_conducts_a_cargo_mission_within_CENTCOM_%28991549%29.webm.480p.vp9.webm" type="video/webm">
+                <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/6/67/Loading_LD3_cargo_containers_onto_United_Boeing_777-300ER.webm/Loading_LD3_cargo_containers_onto_United_Boeing_777-300ER.webm.480p.vp9.webm" type="video/webm">
+            </video>
 
-        <div class="container mx-auto px-4 text-center relative z-10 max-w-4xl">
-            <!-- Badge / Alert Tag -->
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-6 border border-blue-200 shadow-sm animate-float">
-                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                <span>Addressing the General Aviation & Air Cargo Security Gap</span>
-                <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i>
-            </div>
+            <!-- Interactive Moving Flight Paths Canvas (Moving element with palette colors) -->
+            <canvas id="airspaceCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-55"></canvas>
 
-            <!-- Main Hero Headline -->
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
-                Algorithmic Risk Screening for <br class="hidden sm:inline"/>
-                <span class="text-blue-700 underline decoration-blue-300 decoration-wavy decoration-2">High-Risk Flights & Cargo</span>
-            </h1>
-
-            <!-- Subtitle based on User Request Problem Statement -->
-            <p class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-3xl mx-auto">
-                General aviation and air cargo receive significantly less scrutiny than commercial flights, creating an exploitable vector for narcotics smuggling. 
-                <strong>AeroSentinel</strong> uses behavioral telemetry and manifest anomaly detection to prioritize enforcement resources where they matter most.
-            </p>
-
-            <!-- Call To Action Buttons (Like Slide 8 'Get Started') -->
-            <div class="flex flex-wrap justify-center items-center gap-4 mb-12">
-                <a href="#simulator" class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-3.5 rounded-lg shadow-md hover:shadow-xl transition-all duration-200 text-base transform hover:-translate-y-0.5">
-                    <i class="fa-solid fa-bolt"></i>
-                    <span>Launch Risk Simulator</span>
-                </a>
-                <a href="#features" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3.5 rounded-lg border border-gray-300 shadow-sm hover:shadow transition-all duration-200 text-base">
-                    <i class="fa-solid fa-magnifying-glass-chart text-blue-600"></i>
-                    <span>Explore Detection Logic</span>
-                </a>
-            </div>
-
-            <!-- Key Quick Stats Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-gray-200 max-w-3xl mx-auto text-center">
-                <div class="p-3 bg-white/70 backdrop-blur rounded-lg border border-gray-200 shadow-sm">
-                    <div class="text-2xl font-bold text-blue-700">14,200+</div>
-                    <div class="text-xs text-gray-500 font-medium">Daily GA Filings Scanned</div>
-                </div>
-                <div class="p-3 bg-white/70 backdrop-blur rounded-lg border border-gray-200 shadow-sm">
-                    <div class="text-2xl font-bold text-emerald-600">8.4x</div>
-                    <div class="text-xs text-gray-500 font-medium">Interdiction Hit Rate Lift</div>
-                </div>
-                <div class="p-3 bg-white/70 backdrop-blur rounded-lg border border-gray-200 shadow-sm">
-                    <div class="text-2xl font-bold text-purple-600">&lt; 45ms</div>
-                    <div class="text-xs text-gray-500 font-medium">Manifest Anomaly Latency</div>
-                </div>
-                <div class="p-3 bg-white/70 backdrop-blur rounded-lg border border-gray-200 shadow-sm">
-                    <div class="text-2xl font-bold text-amber-600">0% Manual</div>
-                    <div class="text-xs text-gray-500 font-medium">Static Watchlist Dependency</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 3. OUR FEATURES SECTION (Exact Design Pattern in Slide 8: 3 Cards with rounded icon badges) -->
-    <section id="features" class="py-16 bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <!-- Section Header (Leveraging Tailwind Typography Plugin) -->
-            <div class="text-center mb-12 prose prose-blue max-w-2xl mx-auto">
-                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">Our Features</h2>
-                <p class="mt-3 text-base sm:text-lg text-gray-600">
-                    Transforming massive volumes of daily flight plans and air cargo waybills into targeted, high-precision inspection queues.
-                </p>
-            </div>
-
-            <!-- 3 Features Grid (Pattern: Card with icon in colored rounded box, heading, description) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1: Behavioral Telemetry & Flight Patterns (Blue Box Icon) -->
-                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl mb-6 group-hover:bg-blue-700 group-hover:text-white transition-colors duration-300 shadow-sm">
-                            <i class="fa-solid fa-plane-departure"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-700 transition-colors">Behavioral Flight Anomaly Tracking</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                            Screens general aviation aircraft trajectories for unfiled route alterations, transponder deactivations in radar shadow areas, low-altitude fuel loitering, and sudden landing at unmonitored airstrips.
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-gray-200 flex items-center justify-between text-xs font-semibold text-blue-700">
-                        <span>ADS-B & Radar Feeds</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </div>
-                </div>
-
-                <!-- Card 2: Cargo Manifest Discrepancy Engine (Green Box Icon) -->
-                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-200 hover:border-emerald-400 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300 shadow-sm">
-                            <i class="fa-solid fa-boxes-packing"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-700 transition-colors">Cargo Manifest NLP & Weight Discrepancies</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                            Algorithmic natural language parsing identifies phantom shippers, declared vs. actual weight deviations, commodity code mismatches, and last-minute cargo revisions along narcotics transit corridors.
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-gray-200 flex items-center justify-between text-xs font-semibold text-emerald-700">
-                        <span>Automated Waybill Audit</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </div>
-                </div>
-
-                <!-- Card 3: Prioritized Customs Dispatch (Purple Box Icon) -->
-                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-200 hover:border-purple-400 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl mb-6 group-hover:bg-purple-700 group-hover:text-white transition-colors duration-300 shadow-sm">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-700 transition-colors">Dynamic Priority Dispatch Queue</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                            Replaces static watchlists and random sampling by dynamically assigning Bayesian risk percentiles (0-100), directing scarce customs inspectors to the top 1% highest probability narcotics threats first.
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-gray-200 flex items-center justify-between text-xs font-semibold text-purple-700">
-                        <span>Resource Optimization</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. INTERACTIVE RADAR & RISK SIMULATOR (Rich Interactive & Animated Frontend) -->
-    <section id="simulator" class="py-16 bg-gray-900 text-white border-b border-gray-800 relative overflow-hidden">
-        <div class="container mx-auto px-4 max-w-6xl relative z-10">
-            <!-- Section Heading -->
-            <div class="text-center mb-12">
-                <span class="inline-block px-3 py-1 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-full text-xs font-mono font-bold tracking-wider uppercase mb-3">
-                    <i class="fa-solid fa-terminal mr-1"></i> Interactive Evaluation Suite
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Live Anomaly Simulator & Flight Radar</h2>
-                <p class="mt-3 text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
-                    Test the AeroSentinel algorithmic scoring engine in real-time. Adjust flight telemetry parameters or view active radar targets below.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="container mx-auto px-4 text-center relative z-10 max-w-5xl">
                 
-                <!-- Left Column: Interactive Radar Canvas/Display (5 Cols) -->
-                <div class="lg:col-span-5 bg-gray-950 rounded-2xl p-6 border border-gray-800 shadow-2xl relative">
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-800">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span class="font-mono text-xs text-emerald-400 font-bold uppercase tracking-wider">RADAR SECTOR 04 - GA CORRIDOR</span>
-                        </div>
-                        <span class="text-[11px] font-mono text-gray-500">SWEEP 360° / 4.0s</span>
+                <!-- Topic Scope Badge (Swapped) -->
+                <div class="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#1A325A] text-[#EDE9DF] border border-[#C9AF80]/60 text-xs font-mono font-bold tracking-[0.16em] uppercase mb-8 shadow-md animate-float">
+                    <span class="w-2 h-2 rounded-full bg-[#964B36] animate-ping"></span>
+                    <span>Algorithmic Risk Screening for High-Risk Flights & Cargo</span>
+                    <i class="fa-solid fa-plane-shield text-[#C9AF80] text-xs ml-1"></i>
+                </div>
+
+                <!-- Main Hero Headline: SEE THE RISK BEFORE IT FLIES. (Bigger & Uniformly Bold) -->
+                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-serif font-bold text-[#1A325A] tracking-tight leading-[1.08] mb-6">
+                    See the Risk <br class="hidden sm:inline"/>
+                    <span class="text-[#964B36] font-bold">Before It Flies.</span>
+                </h1>
+
+                <!-- Subtitle based on Problem Statement -->
+                <p class="text-base sm:text-xl text-[#4B3621] leading-relaxed mb-10 max-w-3xl mx-auto font-sans font-normal">
+                    General aviation and air cargo receive significantly less scrutiny than commercial passenger flights, creating an exploitable vector for narcotics smuggling. 
+                    <strong class="font-semibold text-[#1A325A]">AeroSentinel</strong> uses behavioral telemetry and manifest anomaly detection to prioritize enforcement resources where they matter most.
+                </p>
+
+                <!-- Call To Action Buttons (Like Slide 8 'Get Started') -->
+                <div class="flex flex-wrap justify-center items-center gap-5 mb-16">
+                    <a href="#simulator" class="inline-flex items-center gap-2.5 bg-[#1A325A] hover:bg-[#102038] text-[#EDE9DF] font-sans font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-base transform hover:-translate-y-1 border border-[#C9AF80]/40">
+                        <i class="fa-solid fa-bolt text-[#C9AF80]"></i>
+                        <span>Launch Risk Simulator</span>
+                    </a>
+                    <a href="#features" class="inline-flex items-center gap-2.5 bg-white/90 hover:bg-white text-[#1A325A] font-sans font-semibold px-8 py-4 rounded-xl border-2 border-[#1A325A] shadow-sm hover:shadow transition-all duration-300 text-base">
+                        <i class="fa-solid fa-magnifying-glass-chart text-[#964B36]"></i>
+                        <span>Explore Detection Logic</span>
+                    </a>
+                </div>
+
+                <!-- Key Quick Stats Bar (Creamy White & Natural Straw Card Borders) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-[#C9AF80]/40 max-w-3xl mx-auto text-center">
+                    <div class="p-4 bg-white/85 backdrop-blur rounded-xl border border-[#C9AF80]/60 shadow-sm">
+                        <div class="text-2xl sm:text-3xl font-serif font-bold text-[#1A325A]">14,200+</div>
+                        <div class="text-xs text-[#4B3621] font-medium mt-1 font-sans">Daily GA Filings Scanned</div>
                     </div>
-
-                    <!-- Visual Radar Screen -->
-                    <div class="relative w-full aspect-square rounded-full border-2 border-emerald-900/60 radar-grid overflow-hidden flex items-center justify-center mb-6 shadow-[inset_0_0_50px_rgba(16,185,129,0.15)]">
-                        <!-- Concentric Distance Rings -->
-                        <div class="absolute w-3/4 h-3/4 rounded-full border border-emerald-500/20 pointer-events-none"></div>
-                        <div class="absolute w-1/2 h-1/2 rounded-full border border-emerald-500/30 pointer-events-none"></div>
-                        <div class="absolute w-1/4 h-1/4 rounded-full border border-emerald-500/40 pointer-events-none"></div>
-                        <!-- Crosshairs -->
-                        <div class="absolute w-full h-[1px] bg-emerald-500/25 pointer-events-none"></div>
-                        <div class="absolute h-full w-[1px] bg-emerald-500/25 pointer-events-none"></div>
-
-                        <!-- Animated Radar Sweep Line -->
-                        <div class="absolute inset-0 origin-center animate-radar-sweep pointer-events-none" style="background: conic-gradient(from 0deg, transparent 0deg, transparent 315deg, rgba(16, 185, 129, 0.45) 360deg);"></div>
-
-                        <!-- Target Blip 1: Critical Risk -->
-                        <button onclick="loadPreset('blip1')" class="absolute top-1/4 right-1/4 p-2 group focus:outline-none z-20" title="Click to inspect N849GA">
-                            <div class="w-3.5 h-3.5 rounded-full bg-red-500 animate-ping-slow absolute"></div>
-                            <div class="w-3.5 h-3.5 rounded-full bg-red-500 border border-white relative flex items-center justify-center text-[8px] font-bold text-white shadow-lg">!</div>
-                            <span class="absolute left-5 top-0 bg-gray-900 text-red-400 border border-red-800 text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow">
-                                N849GA (89%)
-                            </span>
-                        </button>
-
-                        <!-- Target Blip 2: Moderate Discrepancy -->
-                        <button onclick="loadPreset('blip2')" class="absolute bottom-1/3 left-1/4 p-2 group focus:outline-none z-20" title="Click to inspect XB-CL2">
-                            <div class="w-3 h-3 rounded-full bg-amber-500 absolute"></div>
-                            <div class="w-3 h-3 rounded-full bg-amber-400 border border-gray-900 relative"></div>
-                            <span class="absolute left-4 -top-2 bg-gray-900 text-amber-400 border border-amber-800 text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow">
-                                XB-CL2 (61%)
-                            </span>
-                        </button>
-
-                        <!-- Target Blip 3: Low Risk Commercial GA -->
-                        <button onclick="loadPreset('blip3')" class="absolute top-2/3 right-1/3 p-2 group focus:outline-none z-20" title="Click to inspect C-GFTQ">
-                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 relative"></div>
-                            <span class="absolute left-3 top-0 bg-gray-900 text-emerald-400 border border-emerald-800 text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow">
-                                C-GFTQ (14%)
-                            </span>
-                        </button>
+                    <div class="p-4 bg-white/85 backdrop-blur rounded-xl border border-[#C9AF80]/60 shadow-sm">
+                        <div class="text-2xl sm:text-3xl font-serif font-bold text-[#964B36]">8.4x</div>
+                        <div class="text-xs text-[#4B3621] font-medium mt-1 font-sans">Interdiction Hit Rate Lift</div>
                     </div>
-
-                    <!-- Target Quick Selector -->
-                    <div class="space-y-2">
-                        <div class="text-xs text-gray-400 font-semibold mb-2">QUICK RADAR TARGETS (CLICK TO EVALUATE):</div>
-                        <button onclick="loadPreset('blip1')" class="w-full text-left p-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 border border-red-900/40 flex justify-between items-center text-xs transition-colors">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                                <span class="font-mono text-white font-bold">N849GA [Piper PA-31]</span>
-                            </div>
-                            <span class="text-red-400 font-mono font-semibold">SCORE: 89% (CRITICAL)</span>
-                        </button>
-                        <button onclick="loadPreset('blip2')" class="w-full text-left p-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 border border-amber-900/40 flex justify-between items-center text-xs transition-colors">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                <span class="font-mono text-white font-bold">XB-CL2 [Cessna 208B]</span>
-                            </div>
-                            <span class="text-amber-400 font-mono font-semibold">SCORE: 61% (ELEVATED)</span>
-                        </button>
-                        <button onclick="loadPreset('blip3')" class="w-full text-left p-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 border border-emerald-900/40 flex justify-between items-center text-xs transition-colors">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span class="font-mono text-white font-bold">C-GFTQ [King Air 350]</span>
-                            </div>
-                            <span class="text-emerald-400 font-mono font-semibold">SCORE: 14% (ROUTINE)</span>
-                        </button>
+                    <div class="p-4 bg-white/85 backdrop-blur rounded-xl border border-[#C9AF80]/60 shadow-sm">
+                        <div class="text-2xl sm:text-3xl font-serif font-bold text-[#B09462]">&lt; 45ms</div>
+                        <div class="text-xs text-[#4B3621] font-medium mt-1 font-sans">Manifest Anomaly Latency</div>
+                    </div>
+                    <div class="p-4 bg-white/85 backdrop-blur rounded-xl border border-[#C9AF80]/60 shadow-sm">
+                        <div class="text-2xl sm:text-3xl font-serif font-bold text-[#4B3621]">0% Manual</div>
+                        <div class="text-xs text-[#4B3621] font-medium mt-1 font-sans">Static Watchlist Dependency</div>
                     </div>
                 </div>
 
-                <!-- Right Column: Interactive Algorithmic Scoring Form (7 Cols) -->
-                <div class="lg:col-span-7 bg-gray-950 rounded-2xl p-6 sm:p-8 border border-gray-800 shadow-2xl">
-                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
-                        <div>
-                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-calculator text-blue-400"></i>
-                                Flight Risk Scoring Engine
-                            </h3>
-                            <p class="text-xs text-gray-400">Compute dynamic Bayesian inspection priority index</p>
-                        </div>
-                        <button onclick="resetSimulator()" class="text-xs text-gray-400 hover:text-white underline">Reset Parameters</button>
-                    </div>
+            </div>
 
-                    <!-- Interactive Form Inputs -->
-                    <div class="space-y-4">
-                        <!-- Input 1: Flight Category & Airframe -->
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5" for="flightType">
-                                Aircraft Type & Operation Mode
-                            </label>
-                            <select id="flightType" onchange="computeRisk()" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                <option value="10">Scheduled Air Taxi / Corporate Ferry (Low Base Risk)</option>
-                                <option value="35">Private Charter Twin-Turboprop (Moderate Risk)</option>
-                                <option value="55" selected>Unscheduled Night Cargo / Repositioning (Elevated Risk)</option>
-                                <option value="70">Unregistered General Aviation Piston (High Base Risk)</option>
-                            </select>
-                        </div>
+            <!-- Soft Atmospheric Blur & Progressive Color Transition to Features Section -->
+            <div class="blur-fade-to-features"></div>
+        </section>
 
-                        <!-- Input 2: Origin / Transit Corridor -->
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5" for="corridor">
-                                Origin Corridor & Waypoint Profile
-                            </label>
-                            <select id="corridor" onchange="computeRisk()" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                <option value="5">Domestic Standard Controlled Airway (Low Risk)</option>
-                                <option value="25">Cross-Border Coastal Transit with Controlled Towers (Medium)</option>
-                                <option value="50" selected>Known Transshipment Corridor / Remote Unmonitored Strip</option>
-                                <option value="65">Circuitous Routing with Unexplained Offshore Waypoint</option>
-                            </select>
-                        </div>
+        <!-- 3. OUR FEATURES SECTION (Distinctive Editorial Cards matching Slide 8 pattern) -->
+        <section id="features" class="pt-20 pb-44 bg-[#F4F0E6] relative overflow-hidden">
+            <div class="container mx-auto px-6 max-w-6xl relative z-10">
+                
+                <!-- Section Header (Leveraging Tailwind Typography Plugin) -->
+                <div class="text-center mb-16 prose max-w-2xl mx-auto">
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-[#1A325A] tracking-tight">Our Features</h2>
+                    <p class="mt-3 text-base sm:text-lg text-[#4B3621] font-sans">
+                        Transforming massive volumes of daily flight plans and air cargo waybills into targeted, high-precision inspection queues.
+                    </p>
+                </div>
 
-                        <!-- Input 3: Telemetry & Transponder ADS-B Behavior -->
+                <!-- 3 Features Grid (Pattern: Card with icon in colored rounded box, heading, description) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Card 1: Indigo Blue Feature Card -->
+                    <div class="bg-[#1A325A] text-[#EDE9DF] rounded-2xl p-8 border border-[#C9AF80]/30 hover:border-[#C9AF80] shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5" for="telemetry">
-                                Transponder & Altitude Behavior
-                            </label>
-                            <select id="telemetry" onchange="computeRisk()" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg p-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                <option value="0">Continuous Verified ADS-B Broadcast</option>
-                                <option value="20">Single Brief Transponder Interruption (&lt;5 min)</option>
-                                <option value="45" selected>Extended Transponder Gap Near Coastal Boundary (&gt;15 min)</option>
-                                <option value="60">Terrain-Masking Altitude Drop (&lt;500 ft AGL) Detected</option>
-                            </select>
-                        </div>
-
-                        <!-- Input 4: Cargo Manifest Weight Discrepancy -->
-                        <div>
-                            <div class="flex justify-between items-center mb-1.5">
-                                <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider" for="weightMismatch">
-                                    Declared vs Estimated Manifest Payload Variance
-                                </label>
-                                <span id="weightVal" class="text-xs font-mono font-bold text-amber-400">+18% Discrepancy</span>
+                            <div class="w-14 h-14 rounded-2xl bg-[#C9AF80]/20 text-[#C9AF80] border border-[#C9AF80]/40 flex items-center justify-center text-2xl mb-6 group-hover:bg-[#C9AF80] group-hover:text-[#1A325A] transition-all duration-300 shadow-sm">
+                                <i class="fa-solid fa-plane-departure"></i>
                             </div>
-                            <input type="range" id="weightMismatch" min="0" max="50" value="18" step="1" oninput="updateWeightDisplay(this.value); computeRisk();" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                            <div class="flex justify-between text-[10px] text-gray-500 font-mono mt-1">
-                                <span>0% (Exact Match)</span>
-                                <span>25% (Suspicious)</span>
-                                <span>50% (Extreme Anomaly)</span>
-                            </div>
+                            <h3 class="text-xl font-serif font-bold text-[#EDE9DF] mb-3 group-hover:text-[#C9AF80] transition-colors">Behavioral Flight Anomaly Tracking</h3>
+                            <p class="text-[#EDE9DF]/85 text-sm leading-relaxed mb-4 font-sans font-light">
+                                Screens general aviation aircraft trajectories for unfiled route alterations, transponder deactivations in radar shadow areas, low-altitude fuel loitering, and sudden landing at unmonitored airstrips.
+                            </p>
                         </div>
-
-                        <!-- Input 5: Flight Plan Filing Window -->
-                        <div class="pt-2">
-                            <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider block mb-2">Filing Window & Shippers</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <label class="flex items-center gap-2 p-2.5 bg-gray-900 border border-gray-700 rounded-lg cursor-pointer hover:border-gray-600 text-xs">
-                                    <input type="checkbox" id="rushFiling" checked onchange="computeRisk()" class="rounded text-blue-600 focus:ring-0 bg-gray-800 border-gray-600">
-                                    <span>Last-Minute Filing (&lt;45 min)</span>
-                                </label>
-                                <label class="flex items-center gap-2 p-2.5 bg-gray-900 border border-gray-700 rounded-lg cursor-pointer hover:border-gray-600 text-xs">
-                                    <input type="checkbox" id="phantomShipper" checked onchange="computeRisk()" class="rounded text-blue-600 focus:ring-0 bg-gray-800 border-gray-600">
-                                    <span>Unverified Consignee Address</span>
-                                </label>
-                            </div>
+                        <div class="pt-4 border-t border-[#C9AF80]/20 flex items-center justify-between text-xs font-semibold text-[#C9AF80] font-mono">
+                            <span>ADS-B & Radar Feeds</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
                         </div>
                     </div>
 
-                    <!-- Computed Output Display Box -->
-                    <div class="mt-8 pt-6 border-t border-gray-800 bg-gray-900/80 rounded-xl p-5 border border-gray-800">
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div class="text-center sm:text-left">
-                                <div class="text-xs text-gray-400 uppercase font-semibold">Algorithmically Computed Risk Index</div>
-                                <div class="flex items-baseline gap-2 mt-1">
-                                    <span id="riskScoreDisplay" class="text-4xl sm:text-5xl font-extrabold font-mono text-red-500">89%</span>
-                                    <span id="riskBadge" class="text-xs font-bold font-mono px-2.5 py-1 rounded bg-red-950 text-red-400 border border-red-800">
-                                        TIER 1 - CRITICAL INTERDICTION
-                                    </span>
+                    <!-- Card 2: Crisp Ivory & Terracotta Feature Card -->
+                    <div class="bg-white text-[#4B3621] rounded-2xl p-8 border-2 border-[#C9AF80]/50 hover:border-[#964B36] shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-[#964B36]/15 text-[#964B36] border border-[#964B36]/30 flex items-center justify-center text-2xl mb-6 group-hover:bg-[#964B36] group-hover:text-[#EDE9DF] transition-all duration-300 shadow-sm">
+                                <i class="fa-solid fa-boxes-packing"></i>
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-[#1A325A] mb-3 group-hover:text-[#964B36] transition-colors">Cargo Manifest NLP & Weight Discrepancies</h3>
+                            <p class="text-[#4B3621]/85 text-sm leading-relaxed mb-4 font-sans font-light">
+                                Algorithmic natural language parsing identifies phantom shippers, declared vs. actual weight deviations, commodity code mismatches, and last-minute cargo revisions along narcotics transit corridors.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-[#C9AF80]/30 flex items-center justify-between text-xs font-semibold text-[#964B36] font-mono">
+                            <span>Automated Waybill Audit</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Deep Umber Feature Card -->
+                    <div class="bg-[#4B3621] text-[#EDE9DF] rounded-2xl p-8 border border-[#C9AF80]/30 hover:border-[#C9AF80] shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-[#C9AF80]/20 text-[#C9AF80] border border-[#C9AF80]/40 flex items-center justify-center text-2xl mb-6 group-hover:bg-[#C9AF80] group-hover:text-[#4B3621] transition-all duration-300 shadow-sm">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <h3 class="text-xl font-serif font-bold text-[#EDE9DF] mb-3 group-hover:text-[#C9AF80] transition-colors">Dynamic Priority Dispatch Queue</h3>
+                            <p class="text-[#EDE9DF]/85 text-sm leading-relaxed mb-4 font-sans font-light">
+                                Replaces static watchlists and random sampling by dynamically assigning Bayesian risk percentiles (0-100), directing scarce customs inspectors to the top 1% highest probability narcotics threats first.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-[#C9AF80]/20 flex items-center justify-between text-xs font-semibold text-[#C9AF80] font-mono">
+                            <span>Resource Optimization</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Soft Atmospheric Blur & Progressive Color Transition to Indigo Blue Simulator -->
+            <div class="blur-fade-to-simulator"></div>
+        </section>
+
+        <!-- 4. INTERACTIVE RADAR & RISK SIMULATOR (Indigo Blue, Deep Umber & Natural Straw) -->
+        <section id="simulator" class="pt-24 pb-40 bg-[#1A325A] text-[#EDE9DF] relative overflow-hidden">
+            <!-- Subtle Ambient Light at Section Boundary -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-36 bg-[#C9AF80]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="container mx-auto px-6 max-w-6xl relative z-10">
+                
+                <!-- Section Heading -->
+                <div class="text-center mb-14">
+                    <span class="inline-block px-4 py-1.5 bg-[#102038] text-[#C9AF80] border border-[#C9AF80]/40 rounded-full text-xs font-mono font-bold tracking-wider uppercase mb-3 shadow-inner">
+                        <i class="fa-solid fa-terminal mr-1.5 text-[#964B36]"></i> Interactive Evaluation Suite
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-serif font-bold text-[#EDE9DF] tracking-tight">Live Anomaly Simulator & Flight Radar</h2>
+                    <p class="mt-3 text-[#EDE9DF]/80 text-sm sm:text-base max-w-2xl mx-auto font-sans">
+                        Test the AeroSentinel algorithmic scoring engine in real-time. Adjust flight telemetry parameters or view active radar targets below.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- Left Column: Interactive Radar Canvas/Display (5 Cols) -->
+                    <div class="lg:col-span-5 bg-[#102038] rounded-2xl p-6 border border-[#C9AF80]/30 shadow-2xl relative">
+                        <div class="flex justify-between items-center mb-4 pb-3 border-b border-[#C9AF80]/20">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#964B36] animate-ping"></span>
+                                <span class="font-mono text-xs text-[#C9AF80] font-bold uppercase tracking-wider">RADAR SECTOR 04 - GA CORRIDOR</span>
+                            </div>
+                            <span class="text-[11px] font-mono text-[#EDE9DF]/60">SWEEP 360° / 4.0s</span>
+                        </div>
+
+                        <!-- Visual Radar Screen -->
+                        <div class="relative w-full aspect-square rounded-full border-2 border-[#C9AF80]/50 radar-grid overflow-hidden flex items-center justify-center mb-6 shadow-[inset_0_0_60px_rgba(201,175,128,0.18)]">
+                            <!-- Concentric Distance Rings -->
+                            <div class="absolute w-3/4 h-3/4 rounded-full border border-[#C9AF80]/30 pointer-events-none"></div>
+                            <div class="absolute w-1/2 h-1/2 rounded-full border border-[#C9AF80]/40 pointer-events-none"></div>
+                            <div class="absolute w-1/4 h-1/4 rounded-full border border-[#C9AF80]/50 pointer-events-none"></div>
+                            <!-- Crosshairs -->
+                            <div class="absolute w-full h-[1px] bg-[#C9AF80]/30 pointer-events-none"></div>
+                            <div class="absolute h-full w-[1px] bg-[#C9AF80]/30 pointer-events-none"></div>
+
+                            <!-- Animated Radar Sweep Line (Natural Straw Golden Beam) -->
+                            <div class="absolute inset-0 origin-center animate-radar-sweep pointer-events-none" style="background: conic-gradient(from 0deg, transparent 0deg, transparent 315deg, rgba(201, 175, 128, 0.45) 360deg);"></div>
+
+                            <!-- Target Blip 1: Critical Risk (Terracotta) -->
+                            <button onclick="loadPreset('blip1')" class="absolute top-1/4 right-1/4 p-2 group focus:outline-none z-20" title="Click to inspect N849GA">
+                                <div class="w-3.5 h-3.5 rounded-full bg-[#964B36] animate-ping-slow absolute"></div>
+                                <div class="w-3.5 h-3.5 rounded-full bg-[#964B36] border border-white relative flex items-center justify-center text-[8px] font-bold text-white shadow-lg">!</div>
+                                <span class="absolute left-5 top-0 bg-[#4B3621] text-[#EDE9DF] border border-[#964B36] text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow-md">
+                                    N849GA (89%)
+                                </span>
+                            </button>
+
+                            <!-- Target Blip 2: Moderate Discrepancy (Natural Straw) -->
+                            <button onclick="loadPreset('blip2')" class="absolute bottom-1/3 left-1/4 p-2 group focus:outline-none z-20" title="Click to inspect XB-CL2">
+                                <div class="w-3 h-3 rounded-full bg-[#C9AF80] absolute"></div>
+                                <div class="w-3 h-3 rounded-full bg-[#C9AF80] border border-[#102038] relative"></div>
+                                <span class="absolute left-4 -top-2 bg-[#4B3621] text-[#C9AF80] border border-[#C9AF80]/40 text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow-md">
+                                    XB-CL2 (61%)
+                                </span>
+                            </button>
+
+                            <!-- Target Blip 3: Low Risk Commercial GA (Creamy White) -->
+                            <button onclick="loadPreset('blip3')" class="absolute top-2/3 right-1/3 p-2 group focus:outline-none z-20" title="Click to inspect C-GFTQ">
+                                <div class="w-2.5 h-2.5 rounded-full bg-[#EDE9DF] relative"></div>
+                                <span class="absolute left-3 top-0 bg-[#4B3621] text-[#EDE9DF] border border-[#EDE9DF]/40 text-[10px] font-mono px-1.5 py-0.5 rounded whitespace-nowrap shadow-md">
+                                    C-GFTQ (14%)
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- Target Quick Selector -->
+                        <div class="space-y-2.5">
+                            <div class="text-xs text-[#C9AF80] font-semibold mb-2 font-mono">QUICK RADAR TARGETS (CLICK TO EVALUATE):</div>
+                            <button onclick="loadPreset('blip1')" class="w-full text-left p-3 rounded-xl bg-[#1A325A] hover:bg-[#142848] border border-[#964B36]/60 flex justify-between items-center text-xs transition-colors">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#964B36]"></span>
+                                    <span class="font-mono text-[#EDE9DF] font-bold">N849GA [Piper PA-31]</span>
+                                </div>
+                                <span class="text-[#964B36] font-mono font-bold">SCORE: 89% (CRITICAL)</span>
+                            </button>
+                            <button onclick="loadPreset('blip2')" class="w-full text-left p-3 rounded-xl bg-[#1A325A] hover:bg-[#142848] border border-[#C9AF80]/50 flex justify-between items-center text-xs transition-colors">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#C9AF80]"></span>
+                                    <span class="font-mono text-[#EDE9DF] font-bold">XB-CL2 [Cessna 208B]</span>
+                                </div>
+                                <span class="text-[#C9AF80] font-mono font-bold">SCORE: 61% (ELEVATED)</span>
+                            </button>
+                            <button onclick="loadPreset('blip3')" class="w-full text-left p-3 rounded-xl bg-[#1A325A] hover:bg-[#142848] border border-[#EDE9DF]/30 flex justify-between items-center text-xs transition-colors">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#EDE9DF]"></span>
+                                    <span class="font-mono text-[#EDE9DF] font-bold">C-GFTQ [King Air 350]</span>
+                                </div>
+                                <span class="text-[#EDE9DF] font-mono font-bold">SCORE: 14% (ROUTINE)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Algorithmic Scoring Form (7 Cols) -->
+                    <div class="lg:col-span-7 bg-[#102038] rounded-2xl p-6 sm:p-8 border border-[#C9AF80]/30 shadow-2xl">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-[#C9AF80]/20">
+                            <div>
+                                <h3 class="text-xl font-serif font-bold text-[#EDE9DF] flex items-center gap-2.5">
+                                    <i class="fa-solid fa-calculator text-[#C9AF80]"></i>
+                                    Flight Risk Scoring Engine
+                                </h3>
+                                <p class="text-xs text-[#EDE9DF]/70 mt-0.5 font-sans">Compute dynamic Bayesian inspection priority index</p>
+                            </div>
+                            <button onclick="resetSimulator()" class="text-xs text-[#C9AF80] hover:underline font-mono">Reset Parameters</button>
+                        </div>
+
+                        <!-- Interactive Form Inputs -->
+                        <div class="space-y-4 font-sans">
+                            <!-- Input 1: Flight Category & Airframe -->
+                            <div>
+                                <label class="block text-xs font-semibold text-[#C9AF80] uppercase tracking-wider mb-1.5" for="flightType">
+                                    Aircraft Type & Operation Mode
+                                </label>
+                                <select id="flightType" onchange="computeRisk()" class="w-full bg-[#1A325A] border border-[#C9AF80]/40 text-[#EDE9DF] rounded-xl p-3 text-sm focus:border-[#C9AF80] focus:ring-1 focus:ring-[#C9AF80] focus:outline-none">
+                                    <option value="10">Scheduled Air Taxi / Corporate Ferry (Low Base Risk)</option>
+                                    <option value="35">Private Charter Twin-Turboprop (Moderate Risk)</option>
+                                    <option value="55" selected>Unscheduled Night Cargo / Repositioning (Elevated Risk)</option>
+                                    <option value="70">Unregistered General Aviation Piston (High Base Risk)</option>
+                                </select>
+                            </div>
+
+                            <!-- Input 2: Origin / Transit Corridor -->
+                            <div>
+                                <label class="block text-xs font-semibold text-[#C9AF80] uppercase tracking-wider mb-1.5" for="corridor">
+                                    Origin Corridor & Waypoint Profile
+                                </label>
+                                <select id="corridor" onchange="computeRisk()" class="w-full bg-[#1A325A] border border-[#C9AF80]/40 text-[#EDE9DF] rounded-xl p-3 text-sm focus:border-[#C9AF80] focus:ring-1 focus:ring-[#C9AF80] focus:outline-none">
+                                    <option value="5">Domestic Standard Controlled Airway (Low Risk)</option>
+                                    <option value="25">Cross-Border Coastal Transit with Controlled Towers (Medium)</option>
+                                    <option value="50" selected>Known Transshipment Corridor / Remote Unmonitored Strip</option>
+                                    <option value="65">Circuitous Routing with Unexplained Offshore Waypoint</option>
+                                </select>
+                            </div>
+
+                            <!-- Input 3: Telemetry & Transponder ADS-B Behavior -->
+                            <div>
+                                <label class="block text-xs font-semibold text-[#C9AF80] uppercase tracking-wider mb-1.5" for="telemetry">
+                                    Transponder & Altitude Behavior
+                                </label>
+                                <select id="telemetry" onchange="computeRisk()" class="w-full bg-[#1A325A] border border-[#C9AF80]/40 text-[#EDE9DF] rounded-xl p-3 text-sm focus:border-[#C9AF80] focus:ring-1 focus:ring-[#C9AF80] focus:outline-none">
+                                    <option value="0">Continuous Verified ADS-B Broadcast</option>
+                                    <option value="20">Single Brief Transponder Interruption (&lt;5 min)</option>
+                                    <option value="45" selected>Extended Transponder Gap Near Coastal Boundary (&gt;15 min)</option>
+                                    <option value="60">Terrain-Masking Altitude Drop (&lt;500 ft AGL) Detected</option>
+                                </select>
+                            </div>
+
+                            <!-- Input 4: Cargo Manifest Weight Discrepancy -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <label class="text-xs font-semibold text-[#C9AF80] uppercase tracking-wider" for="weightMismatch">
+                                        Declared vs Estimated Manifest Payload Variance
+                                    </label>
+                                    <span id="weightVal" class="text-xs font-mono font-bold text-[#C9AF80]">+18% Discrepancy</span>
+                                </div>
+                                <input type="range" id="weightMismatch" min="0" max="50" value="18" step="1" oninput="updateWeightDisplay(this.value); computeRisk();" class="w-full h-2 bg-[#1A325A] rounded-lg appearance-none cursor-pointer accent-[#964B36]">
+                                <div class="flex justify-between text-[10px] text-[#EDE9DF]/60 font-mono mt-1">
+                                    <span>0% (Exact Match)</span>
+                                    <span>25% (Suspicious)</span>
+                                    <span>50% (Extreme Anomaly)</span>
                                 </div>
                             </div>
 
-                            <!-- Animated Gauge Indicator -->
-                            <div class="w-24 h-24 relative flex items-center justify-center">
-                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                    <path class="text-gray-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                                    <path id="circleGauge" class="text-red-500 transition-all duration-700" stroke-dasharray="89, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                                </svg>
-                                <i id="statusIcon" class="fa-solid fa-triangle-exclamation text-red-500 text-lg absolute"></i>
+                            <!-- Input 5: Flight Plan Filing Window -->
+                            <div class="pt-2">
+                                <label class="text-xs font-semibold text-[#C9AF80] uppercase tracking-wider block mb-2">Filing Window & Shippers</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-2.5 p-3 bg-[#1A325A] border border-[#C9AF80]/30 rounded-xl cursor-pointer hover:border-[#C9AF80] text-xs">
+                                        <input type="checkbox" id="rushFiling" checked onchange="computeRisk()" class="rounded text-[#964B36] focus:ring-0 bg-[#102038] border-[#C9AF80]/50">
+                                        <span class="text-[#EDE9DF]">Last-Minute Filing (&lt;45 min)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2.5 p-3 bg-[#1A325A] border border-[#C9AF80]/30 rounded-xl cursor-pointer hover:border-[#C9AF80] text-xs">
+                                        <input type="checkbox" id="phantomShipper" checked onchange="computeRisk()" class="rounded text-[#964B36] focus:ring-0 bg-[#102038] border-[#C9AF80]/50">
+                                        <span class="text-[#EDE9DF]">Unverified Consignee Address</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Actionable Recommendation -->
-                        <div class="mt-4 pt-3 border-t border-gray-800/80 flex items-start gap-2.5 text-xs">
-                            <i class="fa-solid fa-circle-info text-blue-400 mt-0.5"></i>
-                            <p id="actionDirective" class="text-gray-300">
-                                <strong class="text-white">Directive:</strong> Immediate ramp inspection mandated upon touchdown. Escort aircraft to secure quarantine zone; alert K-9 narcotics detection unit and hold cargo manifest.
-                            </p>
+                        <!-- Computed Output Display Box (Deep Umber & Terracotta Accents) -->
+                        <div class="mt-8 pt-6 border-t border-[#C9AF80]/20 bg-[#4B3621] rounded-xl p-5 border border-[#C9AF80]/30">
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div class="text-center sm:text-left">
+                                    <div class="text-xs text-[#C9AF80] uppercase font-semibold">Algorithmically Computed Risk Index</div>
+                                    <div class="flex items-baseline gap-2.5 mt-1">
+                                        <span id="riskScoreDisplay" class="text-4xl sm:text-5xl font-serif font-bold text-[#964B36]">89%</span>
+                                        <span id="riskBadge" class="text-xs font-bold font-mono px-2.5 py-1 rounded bg-[#964B36] text-[#EDE9DF] border border-[#EDE9DF]/30">
+                                            TIER 1 - CRITICAL INTERDICTION
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Animated Gauge Indicator -->
+                                <div class="w-24 h-24 relative flex items-center justify-center">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                        <path class="text-[#102038]" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                        <path id="circleGauge" class="text-[#964B36] transition-all duration-700" stroke-dasharray="89, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                    </svg>
+                                    <i id="statusIcon" class="fa-solid fa-triangle-exclamation text-[#EDE9DF] text-lg absolute"></i>
+                                </div>
+                            </div>
+
+                            <!-- Actionable Recommendation -->
+                            <div class="mt-4 pt-3 border-t border-[#C9AF80]/20 flex items-start gap-2.5 text-xs font-sans">
+                                <i class="fa-solid fa-circle-info text-[#C9AF80] mt-0.5"></i>
+                                <p id="actionDirective" class="text-[#EDE9DF]/90">
+                                    <strong class="text-[#EDE9DF]">Directive:</strong> Immediate ramp inspection mandated upon touchdown. Escort aircraft to secure quarantine zone; alert K-9 narcotics detection unit and hold cargo manifest.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
-        </div>
-    </section>
+
+            <!-- Soft Atmospheric Blur & Progressive Color Transition to Deep Umber Footer -->
+            <div class="blur-fade-to-footer"></div>
+        </section>
+
     </main>
 
-    <!-- 7. FOOTER (As Required in Lab Manual Slide 1, 4, 6) -->
-    <footer class="bg-gray-900 text-gray-400 pt-12 pb-8 border-t border-gray-800 text-sm">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <!-- 7. FOOTER (Deep Umber with Natural Straw & Creamy White Typography) -->
+    <footer class="bg-[#4B3621] text-[#EDE9DF] pt-14 pb-8 text-sm">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
                 <!-- Col 1: Brand Summary -->
                 <div class="md:col-span-2">
-                    <div class="text-white font-bold text-lg mb-3">
-                        <span>AeroSentinel Interdiction Platform</span>
+                    <div class="text-[#EDE9DF] font-serif font-bold text-2xl mb-3">
+                        AeroSentinel Interdiction Platform
                     </div>
-                    <p class="text-gray-400 text-xs leading-relaxed max-w-md">
+                    <p class="text-[#EDE9DF]/80 text-xs leading-relaxed max-w-md font-sans font-light">
                         Algorithmic risk prioritization engine for general aviation and air cargo inspection. Developed to direct limited enforcement resources toward high-risk flights and eliminate blind spots in transnational narcotics transit corridors.
                     </p>
-                    <div class="mt-4 flex gap-4 text-gray-400 text-base">
-                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin"></i></a>
+                    <div class="mt-4 font-serif italic text-sm text-[#C9AF80] border-l-2 border-[#C9AF80] pl-3">
+                        "SEE THE RISK BEFORE IT FLIES."
                     </div>
                 </div>
 
                 <!-- Col 2: Academic Metadata -->
                 <div>
-                    <h4 class="text-white font-semibold text-xs uppercase tracking-wider mb-3">Academic Context</h4>
-                    <ul class="space-y-1.5 text-xs">
-                        <li><strong>Course:</strong> Full Stack Web Development</li>
-                        <li><strong>Exercise:</strong> Exercise-1 (Tailwind Layout)</li>
-                        <li><strong>Institution:</strong> CHRIST (Deemed to be University)</li>
-                        <li><strong>Plugin:</strong> Tailwind Typography</li>
+                    <h4 class="text-[#C9AF80] font-bold text-xs uppercase tracking-wider mb-3.5 font-mono">Academic Context</h4>
+                    <ul class="space-y-2 text-xs text-[#EDE9DF]/80 font-sans">
+                        <li><strong class="text-[#EDE9DF]">Course:</strong> Full Stack Web Development</li>
+                        <li><strong class="text-[#EDE9DF]">Exercise:</strong> Exercise-1 (Tailwind Layout)</li>
+                        <li><strong class="text-[#EDE9DF]">Institution:</strong> CHRIST (Deemed to be University)</li>
+                        <li><strong class="text-[#EDE9DF]">Plugin:</strong> Tailwind Typography</li>
                     </ul>
                 </div>
 
                 <!-- Col 3: Quick Links -->
                 <div>
-                    <h4 class="text-white font-semibold text-xs uppercase tracking-wider mb-3">Quick Navigation</h4>
-                    <ul class="space-y-1.5 text-xs">
-                        <li><a href="#home" class="hover:text-white transition-colors">Overview</a></li>
-                        <li><a href="#features" class="hover:text-white transition-colors">Inspection Features</a></li>
-                        <li><a href="#simulator" class="hover:text-white transition-colors">Risk Radar Simulator</a></li>
+                    <h4 class="text-[#C9AF80] font-bold text-xs uppercase tracking-wider mb-3.5 font-mono">Quick Navigation</h4>
+                    <ul class="space-y-2 text-xs text-[#EDE9DF]/80 font-sans">
+                        <li><a href="#home" class="hover:text-[#C9AF80] transition-colors">Overview</a></li>
+                        <li><a href="#features" class="hover:text-[#C9AF80] transition-colors">Inspection Features</a></li>
+                        <li><a href="#simulator" class="hover:text-[#C9AF80] transition-colors">Risk Radar Simulator</a></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Bottom Sub-footer -->
-            <div class="pt-6 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+            <div class="pt-6 border-t border-[#C9AF80]/20 flex flex-col sm:flex-row justify-between items-center text-xs text-[#EDE9DF]/70 gap-4">
                 <p>&copy; 2026 AeroSentinel &bull; Exercise-1 Responsive Webpage Layout &bull; Built with Tailwind CSS</p>
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="font-mono text-emerald-400">ALL SYSTEMS NOMINAL</span>
+                    <span class="w-2 h-2 rounded-full bg-[#964B36] animate-ping"></span>
+                    <span class="font-mono text-[#C9AF80]">ALL AIRSPACE SYSTEMS NOMINAL</span>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
+    <!-- INTERACTIVE JAVASCRIPT & ANIMATED RADAR AIRSPACE CANVAS LOGIC -->
     <script>
-        // Mobile Navigation Toggle
+        // -------------------------------------------------------------
+        // ANIMATED BACKGROUND AIRSPACE RADAR CANVAS (Moving Element)
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('airspaceCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let flights = [];
+        const flightCount = 28;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = canvas.parentElement.offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Create flight vector nodes matching the palette:
+        // Indigo Blue (#1A325A), Terracotta (#964B36), Natural Straw (#C9AF80)
+        for (let i = 0; i < flightCount; i++) {
+            flights.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.7,
+                vy: (Math.random() - 0.5) * 0.7,
+                radius: Math.random() * 2 + 1.8,
+                isAnomaly: Math.random() < 0.2, // Flagged flight
+                pulse: 0
+            });
+        }
+
+        function animateAirspace() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw flight corridor connections in Natural Straw (#C9AF80)
+            for (let i = 0; i < flights.length; i++) {
+                for (let j = i + 1; j < flights.length; j++) {
+                    const dx = flights[i].x - flights[j].x;
+                    const dy = flights[i].y - flights[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(201, 175, 128, ${0.4 * (1 - dist / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(flights[i].x, flights[i].y);
+                        ctx.lineTo(flights[j].x, flights[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Update and render flight nodes
+            flights.forEach(f => {
+                f.x += f.vx;
+                f.y += f.vy;
+
+                if (f.x < 0 || f.x > width) f.vx *= -1;
+                if (f.y < 0 || f.y > height) f.vy *= -1;
+
+                f.pulse += 0.05;
+
+                ctx.beginPath();
+                if (f.isAnomaly) {
+                    ctx.fillStyle = '#964B36'; // Terracotta
+                    ctx.shadowColor = '#964B36';
+                    ctx.shadowBlur = 6;
+                } else {
+                    ctx.fillStyle = '#1A325A'; // Indigo Blue
+                    ctx.shadowColor = '#1A325A';
+                    ctx.shadowBlur = 4;
+                }
+                ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw pulsating beacon for high-risk targets in Terracotta
+                if (f.isAnomaly) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(150, 75, 54, ${Math.max(0, 0.7 - (f.pulse % 1.5))})`;
+                    ctx.lineWidth = 1.4;
+                    ctx.arc(f.x, f.y, 8 + (f.pulse % 1.5) * 12, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+
+            requestAnimationFrame(animateAirspace);
+        }
+        animateAirspace();
+
+        // -------------------------------------------------------------
+        // MOBILE NAVIGATION TOGGLE
+        // -------------------------------------------------------------
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
@@ -544,20 +737,21 @@
             }
         });
 
-        // Update Weight Display Slider Label
+        // -------------------------------------------------------------
+        // RISK SIMULATOR ENGINE
+        // -------------------------------------------------------------
         function updateWeightDisplay(val) {
             const display = document.getElementById('weightVal');
             display.textContent = `+${val}% Discrepancy`;
             if (val > 25) {
-                display.className = 'text-xs font-mono font-bold text-red-400';
+                display.className = 'text-xs font-mono font-bold text-[#964B36]';
             } else if (val > 10) {
-                display.className = 'text-xs font-mono font-bold text-amber-400';
+                display.className = 'text-xs font-mono font-bold text-[#C9AF80]';
             } else {
-                display.className = 'text-xs font-mono font-bold text-emerald-400';
+                display.className = 'text-xs font-mono font-bold text-[#EDE9DF]';
             }
         }
 
-        // Compute Algorithmic Risk Score
         function computeRisk() {
             const flightType = parseInt(document.getElementById('flightType').value) || 0;
             const corridor = parseInt(document.getElementById('corridor').value) || 0;
@@ -566,10 +760,7 @@
             const rushFiling = document.getElementById('rushFiling').checked ? 15 : 0;
             const phantomShipper = document.getElementById('phantomShipper').checked ? 20 : 0;
 
-            // Raw weighted sum computation
             let total = (flightType * 0.25) + (corridor * 0.25) + (telemetry * 0.25) + (weightVal * 0.8) + rushFiling + phantomShipper;
-            
-            // Normalize score between 5 and 99
             let score = Math.round(Math.min(99, Math.max(8, total * 0.72)));
 
             const scoreDisplay = document.getElementById('riskScoreDisplay');
@@ -582,30 +773,29 @@
             circle.setAttribute('stroke-dasharray', `${score}, 100`);
 
             if (score >= 75) {
-                scoreDisplay.className = 'text-4xl sm:text-5xl font-extrabold font-mono text-red-500';
-                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-red-950 text-red-400 border border-red-800';
+                scoreDisplay.className = 'text-4xl sm:text-5xl font-serif font-bold text-[#964B36]';
+                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-[#964B36] text-[#EDE9DF] border border-[#EDE9DF]/30';
                 badge.textContent = 'TIER 1 - CRITICAL INTERDICTION';
-                circle.className.baseVal = 'text-red-500 transition-all duration-700';
-                statusIcon.className = 'fa-solid fa-triangle-exclamation text-red-500 text-lg absolute';
-                directive.innerHTML = '<strong class="text-white">Directive:</strong> Immediate ramp inspection mandated upon touchdown. Escort aircraft to secure quarantine zone; alert K-9 narcotics detection unit and hold cargo manifest.';
+                circle.className.baseVal = 'text-[#964B36] transition-all duration-700';
+                statusIcon.className = 'fa-solid fa-triangle-exclamation text-[#EDE9DF] text-lg absolute';
+                directive.innerHTML = '<strong class="text-[#EDE9DF]">Directive:</strong> Immediate ramp inspection mandated upon touchdown. Escort aircraft to secure quarantine zone; alert K-9 narcotics detection unit and hold cargo manifest.';
             } else if (score >= 45) {
-                scoreDisplay.className = 'text-4xl sm:text-5xl font-extrabold font-mono text-amber-500';
-                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-amber-950 text-amber-400 border border-amber-800';
+                scoreDisplay.className = 'text-4xl sm:text-5xl font-serif font-bold text-[#C9AF80]';
+                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-[#C9AF80] text-[#4B3621] border border-[#4B3621]/30';
                 badge.textContent = 'TIER 2 - ELEVATED SCRUTINY';
-                circle.className.baseVal = 'text-amber-500 transition-all duration-700';
-                statusIcon.className = 'fa-solid fa-triangle-exclamation text-amber-500 text-lg absolute';
-                directive.innerHTML = '<strong class="text-white">Directive:</strong> Secondary cargo documentation review required. Dispatch customs agent for physical verification of unsealed crates and pilot credential review.';
+                circle.className.baseVal = 'text-[#C9AF80] transition-all duration-700';
+                statusIcon.className = 'fa-solid fa-triangle-exclamation text-[#4B3621] text-lg absolute';
+                directive.innerHTML = '<strong class="text-[#EDE9DF]">Directive:</strong> Secondary cargo documentation review required. Dispatch customs agent for physical verification of unsealed crates and pilot credential review.';
             } else {
-                scoreDisplay.className = 'text-4xl sm:text-5xl font-extrabold font-mono text-emerald-400';
-                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800';
+                scoreDisplay.className = 'text-4xl sm:text-5xl font-serif font-bold text-[#EDE9DF]';
+                badge.className = 'text-xs font-bold font-mono px-2.5 py-1 rounded bg-[#1A325A] text-[#EDE9DF] border border-[#C9AF80]/40';
                 badge.textContent = 'TIER 3 - ROUTINE CLEARANCE';
-                circle.className.baseVal = 'text-emerald-400 transition-all duration-700';
-                statusIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg absolute';
-                directive.innerHTML = '<strong class="text-white">Directive:</strong> Standard electronic clearance approved. Telemetry parameters correlate with nominal flight plans. No physical detention triggered.';
+                circle.className.baseVal = 'text-[#EDE9DF] transition-all duration-700';
+                statusIcon.className = 'fa-solid fa-circle-check text-[#EDE9DF] text-lg absolute';
+                directive.innerHTML = '<strong class="text-[#EDE9DF]">Directive:</strong> Standard electronic clearance approved. Telemetry parameters correlate with nominal flight plans. No physical detention triggered.';
             }
         }
 
-        // Radar Target Preset Quick Loader
         function loadPreset(preset) {
             if (preset === 'blip1') {
                 document.getElementById('flightType').value = "55";
@@ -633,7 +823,6 @@
                 document.getElementById('phantomShipper').checked = false;
             }
             computeRisk();
-            // Scroll smoothly to simulator
             document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -648,11 +837,9 @@
             computeRisk();
         }
 
-        // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
             computeRisk();
         });
     </script>
 </body>
 </html>
-
